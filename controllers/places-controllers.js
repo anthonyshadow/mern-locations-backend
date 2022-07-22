@@ -1,4 +1,3 @@
-const uuid = require("uuid/v4");
 const { validationResult } = require("express-validator");
 const mongoose = require("mongoose");
 
@@ -6,21 +5,6 @@ const HttpError = require("../models/http-error");
 const getCoordsForAddress = require("../util/location");
 const Place = require("../models/place");
 const User = require("../models/user");
-const user = require("../models/user");
-
-let DUMMY_PLACES = [
-  {
-    id: "p1",
-    title: "Empire State Building",
-    description: "One of the most famous sky scrapers in the world!",
-    location: {
-      lat: 40.7484474,
-      lng: -73.9871516,
-    },
-    address: "20 W 34th St, New York, NY 10001",
-    creator: "u1",
-  },
-];
 
 const getPlaceById = async (req, res, next) => {
   const placeId = req.params.pid; // { pid: 'p1' }
@@ -47,9 +31,6 @@ const getPlaceById = async (req, res, next) => {
 
   res.json({ place: place.toObject({ getters: true }) }); // => { place } => { place: place }
 };
-
-// function getPlaceById() { ... }
-// const getPlaceById = function() { ... }
 
 const getPlacesByUserId = async (req, res, next) => {
   const userId = req.params.uid;
@@ -177,23 +158,23 @@ const deletePlace = async (req, res, next) => {
   let place;
 
   try {
-    place = await Place.findById(placeId).populate('creator');
+    place = await Place.findById(placeId).populate("creator");
   } catch (err) {
     const error = new HttpError("something went wrong", 500);
     return next(error);
   }
 
   if (!place) {
-    const error = new HttpError('Could not find place for this id', 404);
-    return next(error)
+    const error = new HttpError("Could not find place for this id", 404);
+    return next(error);
   }
 
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
-    await place.remove({session: sess});
+    await place.remove({ session: sess });
     place.creator.places.pull(place);
-    await place.creator.save({session: sess});
+    await place.creator.save({ session: sess });
     await sess.commitTransaction();
   } catch (err) {
     const error = new HttpError("something went wrong", 500);
