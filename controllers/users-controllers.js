@@ -16,14 +16,14 @@ const DUMMY_USERS = [
 const getUsers = async (req, res, next) => {
   let users;
 
-  try{
-   users = await User.find({}, '-password')
+  try {
+    users = await User.find({}, "-password");
   } catch (err) {
-    const error = new HttpError("could not get users", 500)
-    return next(error)
+    const error = new HttpError("could not get users", 500);
+    return next(error);
   }
 
-  res.json({users: users.map(user => user.toObject({ getters: true}))})
+  res.json({ users: users.map((user) => user.toObject({ getters: true })) });
 };
 
 const signup = async (req, res, next) => {
@@ -34,7 +34,7 @@ const signup = async (req, res, next) => {
     );
   }
 
-  const { name, email, password, places } = req.body;
+  const { name, email, password } = req.body;
 
   let existingUser;
 
@@ -51,7 +51,7 @@ const signup = async (req, res, next) => {
     image:
       "https://i.pinimg.com/736x/c6/de/4f/c6de4fbc92c32c25dd90c41884968d63--die-minions-minion-s.jpg",
     password,
-    places,
+    places: [],
   });
 
   try {
