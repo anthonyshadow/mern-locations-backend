@@ -19,6 +19,7 @@ router.post(
   placesControllers.createPlace
 );
 
+
 router.patch(
   '/:pid',
   [
