@@ -29,7 +29,7 @@ app.use((req, res, next) => {
   );
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
   next();
-});
+}); 
 
 app.use("/api/places", placesRoutes); // => /api/places...
 app.use("/api/users", usersRoutes);
