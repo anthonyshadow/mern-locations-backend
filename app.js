@@ -16,8 +16,11 @@ app.use(bodyParser.json());
 
 //returns images statically
 app.use('/uploads/images', express.static(path.join('uploads', 'images')))
+app.use(express.static(path.join('public')))
 
 //handling CORS errors
+//CORS HEADERS CAN BE OMITTED WHEN SERVING BOTH FRONTEND AND BACKEND COMBINED
+
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
@@ -31,10 +34,15 @@ app.use((req, res, next) => {
 app.use("/api/places", placesRoutes); // => /api/places...
 app.use("/api/users", usersRoutes);
 
-app.use((req, res, next) => {
-  const error = new HttpError("Could not find this route.", 404);
-  throw error;
-});
+app.use((req,res, next) => {
+  res.sendFile(path.resolve(__dirname, 'public', 'index.html'))
+})
+
+
+// app.use((req, res, next) => {
+//   const error = new HttpError("Could not find this route.", 404);
+//   throw error;
+// });
 
 app.use((error, req, res, next) => {
   if (req.file) {
@@ -51,7 +59,7 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    "mongodb+srv://anthony:TbSJDF9qoQU1VKDD@cluster0.ksrcssq.mongodb.net/places?retryWrites=true&w=majority"
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.ksrcssq.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
   )
   .then(() => {
     app.listen(5001);
